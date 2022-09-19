@@ -1,0 +1,39 @@
+version: "3.2"
+
+services:
+  sudoku_www:
+    image: felixgalindo/php74apache
+    container_name: 'sudoku_www'
+    volumes:
+      - ./app:/var/www
+    ports:
+      - 81:80
+    links: 
+      - sudoku_db
+
+  sudoku_db:
+    image: mariadb:10.2
+    container_name: 'sudoku_db'
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    # ports:
+    #   - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: sudokudb
+      MYSQL_USER: sudokuuser
+      MYSQL_PASSWORD: sudokupassword
+
+  sudoku_pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: 'sudoku_pma'
+    ports:
+      - 8080:80
+    links:
+      - sudoku_db
+    environment:
+      PMA_HOST: sudoku_db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: sudokuuser
+      MYSQL_PASSWORD: sudokupassword
